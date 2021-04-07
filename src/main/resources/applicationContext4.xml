@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!-- 准备工作： -->
+    <!-- 1、配置目标对象 -->
+    <bean name="userDao" class="com.yvonne.zoom.spring.dao.impl.UserDaoImpl"/>
+    <!-- 2.配置通知 -->
+    <bean name="myadvice" class="com.yvonne.zoom.spring.proxy.MyAdvice"/>
+
+    <aop:config>
+        <!-- 3.配置切入点 -->
+        <aop:pointcut expression="execution(* com.yvonne.zoom.spring.dao.impl.*DaoImpl.*(..))" id="pointCut1"/>
+        <!-- 4.配置切面 -->
+        <aop:aspect ref="myadvice">
+            <!-- 4.1) 配置前置通知 -->
+            <aop:before method="before" pointcut-ref="pointCut1"/>
+            <!-- 4.2) 配置后置通知 -->
+            <aop:after-returning method="afterReturning" pointcut-ref="pointCut1"/>
+            <!-- 4.3) 配置环绕通知 -->
+            <aop:around method="around" pointcut-ref="pointCut1"/>
+            <!-- 4.4) 配置异常通知 -->
+            <aop:after-throwing method="afterThrowing" pointcut-ref="pointCut1"/>
+            <!-- 4.5) 配置后置通知（出现异常还会执行） -->
+            <aop:after method="after" pointcut-ref="pointCut1"/>
+        </aop:aspect>
+    </aop:config>
+
+</beans>

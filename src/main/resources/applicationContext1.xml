@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!-- 1、定义StudentDao对象 -->
+	<bean name="studentDao" class="com.yvonne.zoom.spring.dao.impl.StudentDaoImpl"/>
+	<!-- 2、定义StudentService对象 -->
+	<bean name="studentService1" class="com.yvonne.zoom.spring.service.impl.StudentServiceImpl">
+		<property name="studentDao" ref="studentDao"/>
+	</bean>
+	<bean name="studentService2" class="com.yvonne.zoom.spring.service.impl.StudentServiceImpl">
+		<property name="studentDao" ref="studentDao"/>
+	</bean>
+</beans>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <context:property-placeholder location="classpath:db.properties"/>
+    <!--DI:set方法注入-->
+    <bean name="emp04" class="com.yvonne.zoom.spring.domain.Emp">
+        <property name="name" value="yvonne"/>
+        <property name="age" value="18"/>
+    </bean>
+
+    <!--DI:构造方法注入-->
+    <bean name="emp05" class="com.yvonne.zoom.spring.domain.Emp">
+        <constructor-arg name="name" value="yvonne"/>
+        <constructor-arg name="age" value="18"/>
+    </bean>
+    <bean name="emp06" class="com.yvonne.zoom.spring.domain.Emp">
+        <constructor-arg index="0" value="nina"/>
+        <constructor-arg index="1" value="19"/>
+    </bean>
+
+    <!--DI:p名称空间注入-->
+    <bean name="emp07" class="com.yvonne.zoom.spring.domain.Emp" p:name = "yvonne" p:age="18"/>
+
+    <!--DI:spel注入-->
+    <bean name="emp08" class="com.yvonne.zoom.spring.domain.Emp">
+        <property name="name" value="#{emp04.name}"/>
+        <property name="age" value="#{emp05.age}"/>
+    </bean>
+
+    <!--DI:数组注入-->
+    <bean name="cb01" class="com.yvonne.zoom.spring.domain.CollectionBean">
+        <property name="strArr">
+            <array>
+                <value>Yvonne</value>
+                <value>Nina</value>
+                <value>#{emp07.name}</value>
+            </array>
+        </property>
+    </bean>
+
+    <!--DI:List集合注入-->
+    <bean name="cb02" class="com.yvonne.zoom.spring.domain.CollectionBean">
+        <property name="list">
+            <list>
+                <ref bean="emp04"/>
+                <ref bean="emp05"/>
+            </list>
+        </property>
+    </bean>
+
+    <!--DI:Map集合注入-->
+    <bean name="cb03" class="com.yvonne.zoom.spring.domain.CollectionBean">
+        <property name="map">
+            <map>
+                <entry key="#{emp05.age}" value-ref="emp05"></entry>
+                <entry key="#{emp06.age}" value-ref="emp06"></entry>
+            </map>
+        </property>
+    </bean>
+
+    <!--DI:Properties集合注入-->
+    <bean name="cb04" class="com.yvonne.zoom.spring.domain.CollectionBean">
+        <property name="properties">
+            <props>
+                <!--需要加上<context:property-placeholder location="classpath:db.properties"/>-->
+                <prop key="jdbcDriver">${jdbc.driver}</prop>
+                <prop key="jdbcUrl">${jdbc.url}</prop>
+                <prop key="username">${jdbc.username}</prop>
+                <prop key="password">${jdbc.password}</prop>
+<!--                <prop key="jdbcDriver">com.mysql.jdbc.Driver</prop>-->
+<!--                <prop key="jdbcUrl">jdbc:mysql://localhost:3306/java</prop>-->
+<!--                <prop key="username">root</prop>-->
+<!--                <prop key="password">123456</prop>-->
+            </props>
+        </property>
+    </bean>
+
+    <!--DI:对象工厂方法创建对象+spel注入-->
+    <bean name="factory02" class="com.yvonne.zoom.spring.factory.EmpFactory"/>
+    <bean name="emp09" factory-bean="factory02" factory-method="getEmp">
+        <!-- 工厂对象先于spel对象被创建，所以不能使用spel -->
+        <property name="name" value="#{emp05.name}"/>
+<!--        <property name="age" value="#{emp05.age}"/>-->
+    </bean>
+    <bean name="emp10" class="com.yvonne.zoom.spring.domain.Emp">
+        <!-- 工厂对象先于spel对象被创建，所以不能使用spel -->
+        <property name="name" value="#{emp05.name}"/>
+<!--        <property name="age" value="#{emp05.age}"/>-->
+    </bean>
+
+
+</beans>

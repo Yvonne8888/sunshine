@@ -7,5 +7,5 @@ package com.yvonne.zoom.mybatis.util;
  * @Description:
  * @date 2021/3/2923:25
  */
-public class MyBatisUtil {
+public class MyBatisUtils {
 }

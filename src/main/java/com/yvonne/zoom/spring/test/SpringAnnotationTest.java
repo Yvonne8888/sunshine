@@ -28,6 +28,7 @@ public class SpringAnnotationTest {
      *  @Autowired+@Qualifier("指定bean的名称")配合使用
      *      @Autowired：是自动注入，自动从spring的上下文找到合适的bean来注入。如果有多个bean的类型一样，则不能满足要求。
      *  @Resource(name="指定bean的名称")
+     *
      * 从spring容器中放入JavaBean对象
      *  @Service，@Controller，@Repository
      *      分别标记类是Service层类，Controller层类，Repository数据存储dao层的类，spring扫描注解配置时，会标记这些类要生成bean。

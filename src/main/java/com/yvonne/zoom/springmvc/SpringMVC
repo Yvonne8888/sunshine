@@ -1,0 +1,7 @@
+SpringMVC工作原理
+    1)用户向服务器发送请求，请求被springMVC前端控制器DispatchServlet捕获
+    2)DispatchServlet对请求URL进行解析，得到请求资源标识符（URL），然后根据该URL调用HandlerMapping将请求映射到处理器HandlerExecutionChain
+    3)DispatchServlet根据获得的Handler选择一个合适的HandlerAdapter适配器处理
+    4)Handler对数据处理完成之后将返回一个ModelAndView()对象给DispatchServlet
+    5)Handler返回的ModelAndView()只是一个逻辑视图并不是正式视图，DispatchServlet通过ViewResolver视图解析器将逻辑视图转为真正的视图View
+    6)DispatchServlet通过model解析出ModelAndView()中的参数进行解析，最终展现出完整的view并返回给客户端

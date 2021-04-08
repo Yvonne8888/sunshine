@@ -33,7 +33,8 @@ public class UserDaoCglibProxy implements MethodInterceptor {
     @Override
     public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         //1.取得方法名
-        if(method.getName().equals("query")){
+        String str = "query";
+        if(str.equals(method.getName())){
             return  methodProxy.invokeSuper(proxy, args);
         }
         checkSecurity();		//检查安全性

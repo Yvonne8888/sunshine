@@ -9,6 +9,7 @@ import java.util.List;
  * @author Yvonne Wang
  */
 public interface IEmpDao {
+
     List<Emp> findAll() throws SQLException;
     int save(Emp emp) throws SQLException;
     int update(Emp emp) throws SQLException;

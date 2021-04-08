@@ -15,16 +15,16 @@ public class FactoryMethod {
         //普通工厂的使用
         OrdinarySendFactory ordinarySendFactory = new OrdinarySendFactory();
         Sender sender = ordinarySendFactory.product("sms");
-        sender.Send();
+        sender.send();
 
         //多个工厂的使用
         MultipleSendFactory multipleSendFactory = new MultipleSendFactory();
         Sender productMail = multipleSendFactory.productMail();
-        productMail.Send();
+        productMail.send();
 
         //静态工厂模式
         Sender productSms = StaticSendFactory.productSms();
-        productSms.Send();
+        productSms.send();
     }
 }
 
@@ -34,18 +34,18 @@ public class FactoryMethod {
  */
 //接口
 interface Sender{
-    void Send();
+    void send();
 }
 //实现类
 class MailSender implements Sender{
     @Override
-    public void Send(){
+    public void send(){
         System.out.println("This is MailSender!");
     }
 }
 class SmsSender implements Sender{
     @Override
-    public void Send(){
+    public void send(){
         System.out.println("This is SmsSender!");
     }
 }

@@ -21,10 +21,10 @@ interface IMediator{
 }
 
 //抽象的基类
-abstract class User{
+abstract class AbstractUser{
     private IMediator iMediator; //对象中包含中介者
 
-    public User(IMediator iMediator) {
+    public AbstractUser(IMediator iMediator) {
         this.iMediator = iMediator; //需要中介者类来构造函数
     }
 
@@ -36,7 +36,7 @@ abstract class User{
     public abstract void work();
 }
 
-class User1 extends User{
+class User1 extends AbstractUser{
     public User1(IMediator iMediator) {
         super(iMediator);
     }
@@ -48,7 +48,7 @@ class User1 extends User{
     }
 }
 
-class User2 extends User{
+class User2 extends AbstractUser{
     public User2(IMediator iMediator) {
         super(iMediator);
     }
@@ -62,14 +62,14 @@ class User2 extends User{
 
 //中介者类，实现统一接口，持有统一操作的动作
 class MyMediator implements IMediator{
-    private User user1;  /**中介者中包含对象*/
-    private User user2;  /**中介者中包含对象*/
+    private AbstractUser user1;  /**中介者中包含对象*/
+    private AbstractUser user2;  /**中介者中包含对象*/
 
-    public User getUser1() {
+    public AbstractUser getUser1() {
         return user1;
     }
 
-    public User getUser2() {
+    public AbstractUser getUser2() {
         return user2;
     }
 

@@ -117,7 +117,9 @@ public class SpringJdbcTemplateTest {
         }finally{
             // 关闭资源
             try{
-                if(stmt!=null) stmt.close();
+                if(stmt!=null) {
+                    stmt.close();
+                }
             }catch(SQLException se2){
             }// 什么都不做
             try{

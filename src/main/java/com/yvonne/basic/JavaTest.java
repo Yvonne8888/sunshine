@@ -691,7 +691,7 @@ public class JavaTest {
         //静态内部类
         static class InnerClass2{}
         //局部内部类
-        void InnerClassDemo(){
+        void innerClassDemo(){
             class InnerClass2{}
         }
         //匿名内部类

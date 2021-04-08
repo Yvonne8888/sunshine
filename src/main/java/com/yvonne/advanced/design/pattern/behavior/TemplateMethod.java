@@ -18,7 +18,7 @@ public class TemplateMethod {
 abstract class AbstractCalculator2{
     //主方法，实现对本类其它子方法的调用
     public final int calculator(String exp, String opt){
-        int arry[] = split(exp, opt);
+        int[] arry = split(exp, opt);
         return calculator(arry[0], arry[1]);
     }
 
@@ -27,8 +27,8 @@ abstract class AbstractCalculator2{
 
     //实际的子方法
     public int[] split(String exp, String opt){
-        String array[] = exp.split(opt);
-        int arrayInt[] = new int[2];
+        String[] array = exp.split(opt);
+        int[] arrayInt = new int[2];
         arrayInt[0] = Integer.parseInt(array[0]);
         arrayInt[1] = Integer.parseInt(array[1]);
         return arrayInt;

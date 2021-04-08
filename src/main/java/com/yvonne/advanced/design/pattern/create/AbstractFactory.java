@@ -8,17 +8,17 @@ public class AbstractFactory {
     public static void main(String[] args) {
         SendMailFactory sendMailFactory = new SendMailFactory();
         Sender2 sendMail = sendMailFactory.produce();
-        sendMail.Send();
+        sendMail.send();
 
         SendSmsFactory sendSmsFactory = new SendSmsFactory();
         Sender2 sendSms = sendSmsFactory.produce();
-        sendSms.Send();
+        sendSms.send();
     }
 }
 
 //接口
 interface Sender2{
-    void Send();
+    void send();
 }
 //抽象的工厂接口
 interface Provider{
@@ -28,13 +28,13 @@ interface Provider{
 //实现类
 class MailSender2 implements Sender2{
     @Override
-    public void Send() {
+    public void send() {
         System.out.println("This is mailSender2!");
     }
 }
 class SmsSender2 implements Sender2{
     @Override
-    public void Send() {
+    public void send() {
         System.out.println("This is smsSender2!");
     }
 }

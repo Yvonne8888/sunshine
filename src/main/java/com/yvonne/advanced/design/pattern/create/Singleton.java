@@ -74,12 +74,14 @@ class LazyMan{
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 10; i++) {
+        int num = 10;
+        for (int i = 0; i < num; i++) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     LazyMan lazyMan = new LazyMan();
-                    LazyMan manInstance = lazyMan.getInstance();
+//                    LazyMan manInstance = lazyMan.getInstance();
+                    LazyMan manInstance = getInstance();
                     System.out.println(manInstance.hashCode());
                 }
             }).start();

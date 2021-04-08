@@ -59,6 +59,7 @@ abstract class AbstractBridge{
 
 //继承使用抽象的桥
 class MyBridge extends AbstractBridge{
+    @Override
     public void method(){
         getSourceable3().method();
     }

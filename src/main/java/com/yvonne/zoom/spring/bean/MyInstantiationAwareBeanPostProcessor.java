@@ -18,7 +18,7 @@ public class MyInstantiationAwareBeanPostProcessor extends InstantiationAwareBea
     }
 
     /**
-     * 接口方法、设置某个属性时调用
+     * 接口方法、设置某个属性时调用。方法已过时
      * @param pvs
      * @param pds
      * @param bean
@@ -26,11 +26,11 @@ public class MyInstantiationAwareBeanPostProcessor extends InstantiationAwareBea
      * @return 回值也应该是PropertyValues对象
      * @throws BeansException
      */
-    @Override
-    public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
-        System.out.println("InstantiationAwareBeanPostProcessor调用postProcessPropertyValues方法");
-        return pvs;
-    }
+//    @Override
+//    public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
+//        System.out.println("InstantiationAwareBeanPostProcessor调用postProcessPropertyValues方法");
+//        return pvs;
+//    }
 
     /**
      * 接口方法、实例化Bean之前调用

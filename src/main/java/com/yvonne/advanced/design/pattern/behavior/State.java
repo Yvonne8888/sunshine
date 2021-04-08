@@ -57,9 +57,11 @@ class Context{
 
     //行为通过状态来改变
     public void method(){
-        if ("state1".equals(myState.getValue())){
+        String str1 = "state1";
+        String str2 = "state2";
+        if (str1.equals(myState.getValue())){
             myState.method1();
-        }else if ("state2".equals(myState.getValue())){
+        }else if (str2.equals(myState.getValue())){
             myState.method2();
         }
     }

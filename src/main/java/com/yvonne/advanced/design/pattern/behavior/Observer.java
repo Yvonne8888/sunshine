@@ -51,16 +51,19 @@ abstract class AbstractSubject implements Subject{
     private Vector<IObserver> vector = new Vector<IObserver>(); //依赖关系一对多的对象池
 
     //增加依赖对象
+    @Override
     public void add(IObserver observer){
         vector.add(observer);
     }
 
     //删除依赖对象
+    @Override
     public void del(IObserver observer){
         vector.remove(observer);
     }
 
     //通知所有的依赖对象
+    @Override
     public void notifyObserver(){
         Enumeration<IObserver> elements = vector.elements();
         while (elements.hasMoreElements()){

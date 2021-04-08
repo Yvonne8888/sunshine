@@ -80,7 +80,7 @@ public class EmpServiceImpl3 implements IEmpService, IEmpTransferService {
         try {
             int out = empTransferDao.outMoney(from, money);
             System.out.println("out:" + out);
-            //System.out.println(10 / 0);
+//            System.out.println(10 / 0);
             int in = empTransferDao.inMoney(to, money);
             System.out.println("in:" + in);
             if (out == 1 && in == 1) {

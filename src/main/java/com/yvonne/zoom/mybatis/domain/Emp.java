@@ -11,6 +11,8 @@ public class Emp {
     private String name;
     private int age;
 
+    private Dept dept;
+
     public Emp() {
     }
 
@@ -23,6 +25,13 @@ public class Emp {
         this.empno = empno;
         this.name = name;
         this.age = age;
+    }
+
+    public Emp(int empno, String name, int age, Dept dept) {
+        this.empno = empno;
+        this.name = name;
+        this.age = age;
+        this.dept = dept;
     }
 
     public int getEmpno() {

@@ -6,8 +6,8 @@
 	② 接口中的方法名与xml 文件中的某个标签的id 名称一致。
 	③ 接口中的方法的返回值（如果是集合，则是集合元素的类型）类型与xml 文件中的resultType 一致。
 	④ 接口中的方法的参数类型与xml 文件中的parameterType 一致。 -->
-<mapper namespace="empMapper">
-<!--<mapper namespace="mybatis.mapper.IEmpMapper">-->
+<!--<mapper namespace="empMapper">-->
+<mapper namespace="com.yvonne.zoom.mybatis.mapper.IEmpMapper">
 
     <!-- #{}和${}的区别：
         1.#{}表示一个占位符号，通过#{}可以实现preparedStatement 向占位符中设置值，自动

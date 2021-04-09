@@ -394,14 +394,15 @@
             </plugin>
         </plugins>
 
-        <!--<resources>
+        <!--idea不会编译src的java目录的xml文件，需要加以下配置-->
+        <resources>
             <resource>
                 <directory>src/main/java</directory>
                 <includes>
                     <include>**/*.xml</include>
                 </includes>
             </resource>
-        </resources>-->
+        </resources>
     </build>
 
 

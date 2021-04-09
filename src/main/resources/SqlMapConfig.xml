@@ -32,14 +32,14 @@
 
     <mappers>
         <!-- 增加实体类的映射文件 -->
-        <!--<mapper resource="com/yvonne/zoom/mybatis/mapper/DeptMapper.xml"/>-->
+        <mapper resource="com/yvonne/zoom/mybatis/mapper/DeptMapper.xml"/>
 
         <!-- 动态代理 -->
         <mapper resource="com/yvonne/zoom/mybatis/mapper/EmpMapper.xml"/>
-        <!--<mapper resource="com/yvonne/zoom/mybatis/mapper/mapper/DeptMapper.xml"/>-->
+        <mapper resource="com/yvonne/zoom/mybatis/mapper/DeptMapper.xml"/>
 
         <!-- 注解方式：映射包内所有增加了注解的接口 -->
-        <!--<package name="mybatis.mapper.annotation"/>-->
+        <package name="com.yvonne.zoom.mybatis.mapper.annotation"/>
 
         <!-- 注意：mapper与package如果造成文件重复映射可能导致问题发生 -->
 

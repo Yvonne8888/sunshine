@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Yvonne Wang
  */
-public interface IEmpMpper {
+public interface IEmpMapper {
 
     /**Mapper 动态代理开发方式：（经常使用）
      ① 接口的完全限定名与xml 文件中的namespace 要一致。

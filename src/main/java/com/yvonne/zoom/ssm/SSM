@@ -1,0 +1,19 @@
+Spring + SpringMVC + Mybatis
+    持久层（Mybatis）：Dao层（mapper）
+        Dao层主要是做数据持久层的工作，负责与数据库进行联络的一些任务都封装在此
+        Dao层的设计
+            首先设计Dao层的接口
+            然后在Spring配置文件中定义此接口的实现类
+            再在模块中调用此接口来进行数据业务的处理，而不用关系此接口的具体实现类是哪个类
+        Dao层的数据源配置，以及有关数据库连接的参数都在Spring的配置文件中进行配置
+    业务层（Spring）：Service层
+        Service层主要服务业务模块的逻辑应用设计
+        Service层的设计
+            首先设计Service层的接口，再设计其实现的类
+            然后在Spring的配置文件中配置其实现的关联。这样就可以在应用中调用Service接口来进行业务处理
+        Service层的实现需要具体调用到已定义的Dao层接口
+    表现层（SpringMVC）：Controller层（Handler层）
+        Controller层主要负责具体的业务模块流程的控制（调用Service层的接口）
+        控制器需要在Spring配置文件中配置
+    视图层：View层
+        View层与控制层结合，View层主要负责前端JSP页面的表示

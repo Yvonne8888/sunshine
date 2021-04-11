@@ -6,6 +6,7 @@ Spring主要核心：
        1.3)对象工厂方法创建对象
    2)依赖注入DI：
       2.1)Spring使用JavaBean对象的set方法或者带参的构造方法为我们在创建所需的对象时将其属性自动设置所需要的值的过程。
+      即容器动态的将某种依赖关系注入到组件中
         set方法注入
         构造方法注入
         p名称空间注入（不常使用)
@@ -18,12 +19,20 @@ Spring主要核心：
       2.2)采用注解的方式。注解注入将会被容器在XML注入之前被处理，所以XML注入会覆盖掉注解注入对于同一个属性的处理。
         注解装配在spring中默认是关闭的。所以需要在spring的核心配置文件中配置一下才能使用基于注解的装配模式。
         配置方式如下：<context:annotation-config />
-
    3)面向切面编程AOP：在面向对象编程（OOP)思想中，我们将事物纵向抽成一个个对象；
        而在面向切面编程（AOP)思想中，我们将一个个的对象某些类似的方面横向抽成一个切面，对这个切面进行一些例如权限控制，事务管理，记录日志等
-       公用操作处理的过程。
+       公用操作处理的过程。切面会影响到整个应用程序的关注功能，跟正常的业务逻辑是没有必然的联系，但是几乎所有的业务逻辑都会涉及到这些关注功能。
        AOP主要思想：横向重复，纵向抽取。
        AOP的底层是动态代理，如果是接口则采用的是JDK动态代理，如果是类采用CGLIB方式实现动态代理。
+
+AOP名词：
+     *   Joinpoint（连接点）：目标对象中，所有可以增强的方法
+     *   Pointcut（切入点）：目标对象，已经增强的方法
+     *   Advice（通知/增强）：增强的代码
+     *   Target（目标对象）：被代理的对象
+     *   Weaving（织入）：将通知应用到切入点的过程
+     *   Proxy（代理）：将通知织入到目标对象后，形成代理对象
+     *   aspect（切面）：切入点 + 通知
 
 Spring中的设计模式:
    1)单例模式：spring中两种代理方式，若目标对象实现了若干接口，spring使用jdk的java.lang.reflect.Proxy类代理。
@@ -40,6 +49,14 @@ Spring中的设计模式:
 Spring与junit4整合
    注解：@RunWith(SpringJUnit4ClassRunner.class)
         @ContextConfiguration("classpath:applicationContext.xml")
+
+Spring Bean的作用域
+    singleton:Bean在每个Spring IOC容器中只有一个实例
+    prototype:一个Bean的定义可以有多个实例
+    request:每次http请求都会创建一个Bean，该作用域仅在基于web的Spring ApplicationContext情形下有效
+    session:在一个HTTP session中，一个Bean定义对应一个实例。该作用域仅在基于web的Spring ApplicationContext情形下有效
+    global-session:在一个全局的HTTP session中，一个Bean定义对应一个实例。该作用域仅在基于web的Spring ApplicationContext情形下有效
+
 
 Spring Bean的生命周期
     Bean定义：在配置文件里面用<bean></bean>来进行定义
@@ -60,3 +77,12 @@ Spring Bean的生命周期
         4)工厂后处理器接口方法
             这个包括了AspectJWeavingEnabler, ConfigurationClassPostProcessor, CustomAutowireConfigurer等等
             非常有用的工厂后处理器接口的方法。工厂后处理器也是容器级的。在应用上下文装配配置文件之后立即调用。
+
+Spring事务
+    事务就是对一系列的数据库操作（比如插入多条数据）进行统一的提交或回滚操作，如果插入成功，那么一起成功，
+        如果中间有一条出现异常，那么回滚之前的所有操作。这样可以防止出现脏数据，防止数据库数据出现问题。
+    Spring的事务使用TransactionManager进行管理
+    两种事务管理：
+        1)编程式事务：自己写事务处理类，然后调用
+        2)声明式事务：在配置文件中配置，搭配框架
+

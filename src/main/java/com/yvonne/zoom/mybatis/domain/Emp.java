@@ -10,6 +10,7 @@ public class Emp {
     private int empno;
     private String name;
     private int age;
+    private int deptpno;
 
     private Dept dept;
 
@@ -27,10 +28,11 @@ public class Emp {
         this.age = age;
     }
 
-    public Emp(int empno, String name, int age, Dept dept) {
+    public Emp(int empno, String name, int age, int deptpno, Dept dept) {
         this.empno = empno;
         this.name = name;
         this.age = age;
+        this.deptpno = deptpno;
         this.dept = dept;
     }
 
@@ -56,6 +58,22 @@ public class Emp {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public int getDeptpno() {
+        return deptpno;
+    }
+
+    public void setDeptpno(int deptpno) {
+        this.deptpno = deptpno;
+    }
+
+    public Dept getDept() {
+        return dept;
+    }
+
+    public void setDept(Dept dept) {
+        this.dept = dept;
     }
 
     @Override

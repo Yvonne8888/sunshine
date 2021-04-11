@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.yvonne.zoom.mybatis.mapper.IDeptMapper2">
+<mapper namespace="com.yvonne.zoom.mybatis.mapper.IDeptMapper3">
     <!-- 数据库表结构的一对一与一对多关系 -->
 
 
@@ -79,8 +79,6 @@
     </sql>
     <sql id="deptNoIn">
         <!-- <where> -->
-        <!-- collection:代表遍历的集合，item:代表集合中某项，open:代表where条件开始部分，
-              close:代表条件结束部分，separator:代表每一部分遍历时的分隔符-->
         <foreach collection="deptnoList" item="customName111" open="deptno in(" close=")" separator=",">
             #{customName111}
         </foreach>

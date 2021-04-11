@@ -44,4 +44,10 @@
         <!-- 注意：mapper与package如果造成文件重复映射可能导致问题发生 -->
 
     </mappers>
+
+    <!--二级缓存，可以不配置，默认为true-->
+   <!-- <settings>
+        <setting name="cacheEnabled" value="true"/>
+    </settings>-->
+
 </configuration>

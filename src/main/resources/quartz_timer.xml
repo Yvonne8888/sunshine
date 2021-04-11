@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    <!--job-->
+    <bean id="myJob" class="com.yvonne.zoom.quartz.utils.MyQuartzTimer"></bean>
+    <!--jobDetail任务实例-->
+    <bean id="myQuartzTimerJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="myJob"/>
+        </property>
+        <property name="targetMethod" value="doTask"/>
+    </bean>
+    <!--Trigger调度器-->
+    <bean id="myQuartzTimerTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="myQuartzTimerJob"/>
+        <!-- 确保quartz的版本在1.8.6及以前的，否则会报错；每10s跑一次-->
+        <property name="cronExpression" value="0/10 * 0-23 * * ?"/>
+    </bean>
+
+    <!--Scheduler触发器-->
+    <bean name="startQuartz" lazy-init="false" autowire="no" class = "org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="myQuartzTimerTrigger" />
+            </list>
+        </property>
+    </bean>
+</beans>

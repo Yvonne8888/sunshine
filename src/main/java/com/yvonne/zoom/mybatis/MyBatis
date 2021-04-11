@@ -1,0 +1,44 @@
+MyBatis编程步骤
+    1)创建SqlSessionFactory对象
+    2)通过SqlSessionFactory对象创建SqlSession
+    3)通过SqlSession执行数据库操作
+    4)调用SqlSession.commit()提交事务
+    5)调用SqlSession.close()关闭会话
+
+MyBatis中#和$书写占位符
+    1.#{}表示一个占位符号，通过#{}可以实现preparedStatement 向占位符中设置值，自动
+        进行java 类型和jdbc 类型转换。#{}可以有效防止sql 注入。#{}可以接收简单类型值或pojo
+        属性值。如果parameterType 传输单个简单类型值，#{}中可以写自定义名称；如果是传输一个对象，
+        需要与对象的属性名一致。
+      #将传入的数据都当成一个字符串，会对传入的数据自动加上引号
+    2.${}表示拼接sql 串，通过${}可以将parameterType 传入的内容拼接在sql 中且不进行
+        jdbc 类型转换， ${}可以接收简单类型值或pojo 属性值，如果parameterType 传输单个简单
+        类型值，${}括号中只能是value。
+      $将传入的数据直接显示生产在SQL中
+    注意：使用KaTeX parse error: Expected 'EOF', got '#' at position 21: …会导致 SQL 注射攻击，能用#̲的地方就不要使用$，
+        写 order by 子句的时候应该用$而不是#。
+
+MyBatis中xml配置的命名空间（namespace）
+    为每个映射文件起一个唯一的命名空间
+
+MyBatis一级、二级缓存
+    1)一级缓存：基于PerpetualCache（永久缓存）的HashMap本地缓存，其存储作用域为Session，当Session flush或close之后，
+        该Session中的所有Cache就将清空。
+    2)二级缓存：与一级缓存机制相同，默认采用PerpetualCache，HashMap存储，不同在于其存储作用域为Mapper(namespace)，
+        并且可自定义存储源，如Ehcache（高速缓存）。
+        开启二级缓存，需要在SQL映射文件中添加：
+            <!-- 声明这个namespace 使用二级缓存-->
+            <!-- size最多缓存对象个数，默认1024 -->
+            <!-- eviction回收策略 -->
+            <!-- flushInterval自动刷新时间ms，未配置时只有调用时刷新 -->
+            <!-- readOnly默认是false（安全），改为true 可读写时，对象必须支持序列化 -->
+            <cache type="org.apache.ibatis.cache.impl.PerpetualCache"  size="1024" eviction="LRU"
+                flushInterval="120000" readOnly="false"/>
+        SqlMapConfig.xml中配置（也可不用配置，默认为true）
+            <settings>
+                <setting name="cacheEnabled" value="true"/>
+            </settings>
+    3)对于缓存数据更新机制，当某一个作用域(一级缓存 Session/二级缓存Namespaces)的进行了C/U/D 操作后，
+        默认该作用域下所有 select 中的缓存将被 clear。
+
+

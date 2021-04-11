@@ -52,7 +52,12 @@
     </select>
 
     <!-- 新增 -->
-    <insert id="save" parameterType="com.yvonne.zoom.mybatis.domain.Emp">
+    <!-- 对于Mysql的自增序列的处理
+        <insert id="save" parameterType="com.yvonne.zoom.mybatis.domain.Emp"
+            keyProperty="empno" useGeneratedKeys="true">
+            INSERT INTO emp VALUES(#{empno}, #{name}, #{age})
+        </insert> -->
+    <insert id="save" parameterType="com.yvonne.zoom.mybatis.domain.Emp" >
         <!-- 对于Oracle的自增序列的处理
         <selectKey keyProperty="empno" order="BEFORE" resultType="integer">
             SELECT emp_seq.nextval from dual
@@ -64,4 +69,12 @@
         <!-- DELETE FROM emp WHERE empno = ${value} -->
         DELETE FROM emp WHERE empno = #{customName}
     </delete>
+
+    <!-- 声明这个namespace 使用二级缓存-->
+    <!-- size最多缓存对象个数，默认1024 -->
+    <!-- eviction回收策略 -->
+    <!-- flushInterval自动刷新时间ms，未配置时只有调用时刷新 -->
+    <!-- readOnly默认是false（安全），改为true 可读写时，对象必须支持序列化 -->
+    <cache type="org.apache.ibatis.cache.impl.PerpetualCache"
+           size="1024" eviction="LRU" flushInterval="120000" readOnly="false"/>
 </mapper>

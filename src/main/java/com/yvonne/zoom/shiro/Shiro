@@ -1,0 +1,42 @@
+Shiro安全认证框架
+    三个核心组件
+        1）Subject：指”当前跟软件交互的东西“，代表当前用户的安全操作
+        2）SecurityManager：管理所有用户的安全操作，是Shiro的核心，典型的Facade模式（外观模式）
+            Shiro通过SecurityManager来管理内部组件实例，并通过它来提供安全管理的各种服务
+        3）Realms(英文：领域)：Realm充当了Shiro与应用安全数据间的“桥梁”或者“连接器”。
+            也就是说，当对用户执行认证（登录）和授权（访问控制）验证时，Shiro会从应用配置的Realm中查找用户及其权限信息
+
+    四个主要组件
+        1）SecurityManager
+        2）Authenticator（认证者）：对“Who are you ？”进行核实。通常涉及用户名和密码。
+            这个组件负责收集 principals 和 credentials，并将它们提交给应用系统。
+            如果提交的 credentials 跟应用系统中提供的 credentials 吻合，就能够继续访问，
+            否则需要重新提交 principals 和 credentials， 或者直接终止访问。
+        3）Authorizer（授权人）：身份份验证通过后，由这个组件对登录人员进行访问控制的筛查，
+            比如“who can do what”， 或者“who can do which actions”。
+            Shiro 采用“基于 Realm”的方法，即用户（又称 Subject）、用户组、角色和permission 的聚合体。
+        4）Session Manager：这个组件保证了异构客户端的访问，配置简单。它是基于 POJO/J2SE 的，不跟任何的客户 端或者协议绑定。
+
+    运行原理
+        1）Application Code:应用程序代码，就是我们自己的编码，如果在程序中需要进行权限控制，需要调用Subject的API。
+        2）Subject:主体，代表的了当前用户。所有的Subject都绑定到SecurityManager，与Subject的所有交互都会委托给
+            SecurityManager,可以将Subject当成一个门面，而真正执行者是SecurityManager。
+        3）SecurityManage:安全管理器，所有与安全有关的操作都会与 SecurityManager 交互，并且它管理所有的 Subject 。
+        4）Realm:域shiro是从Realm来获取安全数据（用户，角色，权限）。就是说SecurityManager要验证用户身份，
+            那么它需要从Realm获取相应的用户进行比较以确定用户身份是否合法；
+            也需要从Realm得到用户相应的角色/权限进行验证用户是否能进行操作；可以把 Realm看成DataSource，即安全数据源。
+
+    四种权限控制方式
+        1）url级别权限控制
+        2）方法注解权限控制
+        3）代码级别权限控制
+        4）页面标签权限控制
+
+    粗颗粒和细颗粒权限
+         粗颗粒：对资源类型的管理称为粗颗粒度权限控制，即只控制到菜单、按钮、方法。针对url链接的控制。
+            比如：用户具有用户管理的权限，具有导出订单明细的权限。
+         细颗粒：对资源实例的控制称为细颗粒度权限管理，即控制到数据级别的权限。针对数据级别的控制。
+            比如：用户只允许修改本部门的员工信息，用户只允许导出自己创建的订单明细。
+         如何授权
+            粗颗粒权限：可以使用过滤器统一拦截 url。
+            细颗粒权限：在 service 中控制，在程序级别来控制，个性化编程。

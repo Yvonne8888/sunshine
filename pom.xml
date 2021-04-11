@@ -165,6 +165,19 @@
             <artifactId>javassist</artifactId>
             <version>3.22.0-GA</version>
         </dependency>
+        <!--Quartz定时任务-->
+            <!--工具包-->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+            <!--核心包-->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.3.2</version>
+        </dependency>
         <!-- logger -->
         <dependency>
             <groupId>log4j</groupId>
@@ -192,6 +205,11 @@
                     <groupId>commons-beanutils</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+            <version>1.7.1</version>
         </dependency>
         <!-- lucene -->
         <dependency>

@@ -11,6 +11,9 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Yvonne Wang
  * @date 2021/4/1122:27
@@ -22,11 +25,16 @@ public class ShiroTest {
      */
     @Test
     public void test01(){
+        //获取到SecurityManager工厂
         Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro-credentials.ini");
+        //得到SecurityManager对象
         SecurityManager securityManager = factory.getInstance();
+        //将SecurityManager放到工作环境中
         SecurityUtils.setSecurityManager(securityManager);
+        //通过SecurityUtils从当前工作环境种取得主体信息
         Subject subject = SecurityUtils.getSubject();
         AuthenticationToken token = new UsernamePasswordToken("yvonne", "123");
+        //进行主体的认证
         subject.login(token);
         System.out.println("验证是否通过：" + subject.isAuthenticated());
         /*1.如果iniRealm 返回的是null，则抛出：org.apache.shiro.authc.UnknownAccountException
@@ -78,5 +86,75 @@ public class ShiroTest {
         AuthenticationToken token = new UsernamePasswordToken("yvonne", oldPassword);
         subject.login(token);
         System.out.println("验证是否通过：" + subject.isAuthenticated());
+    }
+
+    /**
+     * Shiro的三种授权方法：
+     *  1.编程式：通过写if/else 授权代码块完成：
+     *      Subject subject = SecurityUtils.getSubject();
+     * 		if(subject.hasRole("admin")) {
+     * 			//有权限
+     *       } else {
+     * 			//无权限
+     *       }
+     *  2.注解式：通过在执行的Java 方法上放置相应的注解完成：
+     *      //@RequiresRoles("admin")
+     *      public void hello() {
+     *          //有权限
+     *      }
+     *  3.JSP/GSP 标签：在JSP/GSP 页面通过相应的标签完成：
+     *      <shiro:hasRole name="admin">
+     *          <!— 有权限—>
+     *      </shiro:hasRole>
+     */
+
+    /**
+     * 授权方法测试
+     */
+    @SuppressWarnings("AlibabaRemoveCommentedCode")
+    @Test
+    public void test04() {
+        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro-permissions.ini");
+        SecurityManager securityManager = factory.getInstance();
+        SecurityUtils.setSecurityManager(securityManager);
+        Subject subject = SecurityUtils.getSubject();
+        AuthenticationToken token = new UsernamePasswordToken("yvonne", "123");
+        subject.login(token);
+        System.out.println("验证是否通过：" + subject.isAuthenticated());
+        System.out.println();
+
+        //验证角色
+        System.out.println("单个是否存在：" + subject.hasRole("role1"));
+        List<String> roles = Arrays.asList("role1", "role2");
+        List<String> roles2 = Arrays.asList("role1");
+        System.out.println("所有是否存在：" + subject.hasAllRoles(roles));
+        //只要ini文件包含集合内容就成功
+        System.out.println("是否存在(测试)：" + subject.hasAllRoles(roles2));
+        System.out.println();
+
+        //验证权限
+        System.out.println("单个是否授权：" + subject.isPermitted("emp:create"));
+        System.out.println("多个是否授权：" + subject.isPermittedAll("emp:create","emp:update"));
+    }
+
+    /**
+     * 自定义Realm授权方法测试
+     */
+    @Test
+    public void test05() {
+        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro-permissions_customRealm.ini");
+        SecurityManager securityManager = factory.getInstance();
+        SecurityUtils.setSecurityManager(securityManager);
+        Subject subject = SecurityUtils.getSubject();
+        AuthenticationToken token = new UsernamePasswordToken("yvonne", "123");
+        subject.login(token);
+
+        //验证权限
+        System.out.println("单个是否授权：" + subject.isPermitted("emp:create"));
+        System.out.println("多个是否授权：" + subject.isPermittedAll("emp:create","emp:update"));
+
+        //检查授权(如果不在授权范围，则抛出异常)
+        subject.checkPermission("emp:create");
+        subject.checkPermissions("emp:create","emp:update");
     }
 }

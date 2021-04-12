@@ -1,21 +1,36 @@
 Shiro安全认证框架
-    三个核心组件
+    组成
         1）Subject：指”当前跟软件交互的东西“，代表当前用户的安全操作
         2）SecurityManager：管理所有用户的安全操作，是Shiro的核心，典型的Facade模式（外观模式）
             Shiro通过SecurityManager来管理内部组件实例，并通过它来提供安全管理的各种服务
-        3）Realms(英文：领域)：Realm充当了Shiro与应用安全数据间的“桥梁”或者“连接器”。
-            也就是说，当对用户执行认证（登录）和授权（访问控制）验证时，Shiro会从应用配置的Realm中查找用户及其权限信息
-
-    四个主要组件
-        1）SecurityManager
-        2）Authenticator（认证者）：对“Who are you ？”进行核实。通常涉及用户名和密码。
+        3）Authenticator（认证器）：对“Who are you ？”进行核实。通常涉及用户名和密码。
             这个组件负责收集 principals 和 credentials，并将它们提交给应用系统。
             如果提交的 credentials 跟应用系统中提供的 credentials 吻合，就能够继续访问，
             否则需要重新提交 principals 和 credentials， 或者直接终止访问。
-        3）Authorizer（授权人）：身份份验证通过后，由这个组件对登录人员进行访问控制的筛查，
+        4）Authorizer（授权器）：身份份验证通过后，由这个组件对登录人员进行访问控制的筛查，
             比如“who can do what”， 或者“who can do which actions”。
             Shiro 采用“基于 Realm”的方法，即用户（又称 Subject）、用户组、角色和permission 的聚合体。
-        4）Session Manager：这个组件保证了异构客户端的访问，配置简单。它是基于 POJO/J2SE 的，不跟任何的客户 端或者协议绑定。
+        5）Session Manager：这个组件保证了异构客户端的访问，配置简单。它是基于 POJO/J2SE 的，不跟任何的客户端或者协议绑定。
+        6）SessionDao：通过SessionDao管理session数据
+        7）Cache Manager（缓存管理器）：主要对session和授权数据进行缓存，比如将授权数据通过cachemManager进行缓存管理，
+            ehcache整合对缓存数据进行管理
+        8）Realm(英文：领域)：Realm充当了Shiro与应用安全数据间的“桥梁”或者“连接器”。
+            也就是说，当对用户执行认证（登录）和授权（访问控制）验证时，Shiro会从应用配置的Realm中查找用户及其权限信息
+        9）Cryptography（密码管理）：提供了一套加密/解密的组件，方便开发。比如提供常用的散列、加/解密等功能
+            比如md5散列算法
+
+    认证原理分析：
+        1）根据ini配置文件得到SelcurityManager对象
+        2）由ModularRealmAuthenticator（模块领域验证器）调用iniRealm，将token中的主体信息传递到ini文件中，进行比对，
+            如果内容一致，就将得到的认证主体给ModularRealmAuthenticator，否则抛出UnknownAccountException
+        3）将返回得到的ini文件中的主体密码与token中输入的密码进行比对，如果不一致，就抛出IncorrectCredentialsException（无效凭证异常）
+
+    授权原理分析：
+        1）subject进行授权，调用isPermitted（授权串）方法进行
+        2）SecurityManager进行授权，调用ModularReamAuthenticator查找自定义realm，由自定义的realm在数据库中进行查找相应的权限串，
+            由PermissionResolver（权限解析器）进行权限串的比对，（将isPermitted后的权限串与数据库中找到的权限串进行比对），如果存在则
+            授权成功，否则失败报异常。
+
 
     运行原理
         1）Application Code:应用程序代码，就是我们自己的编码，如果在程序中需要进行权限控制，需要调用Subject的API。

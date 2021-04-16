@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * JavaTest class
@@ -550,10 +551,45 @@ public class JavaTest {
     static class CollectionDemo{
         public static void main(String[] args) {
             //List的三个实现类：
-            // 1）ArrayList底层结构是数组，底层查询快，增删慢；
-            // 2）LinkedList底层结构是链表型的，增删快，查询慢；
-            // 3）vector底层机构是数组，线程安全，增删慢，查询慢。
-            // 存储单列数据的集合，存储顺序有序，且可以重复
+            // 1）ArrayList底层结构是数组，底层查询快，增删慢，不安全，使用频率很高。
+                // 1.数组是定长的，往里添加数据，不会有问题吗？
+                    // 答：通过构造方法在初始化时指定数组的大小。通过无参构造方法进行初始化，则复制地城Object[]elementData为一个默认空数组，
+                    // 所以数组容量为0，只有对数组数据进行add添加时，才会分配默认初始容量为10；通过有参构造方法则会判断参数的大小为其分配容量。
+                // 2.数组的长度有限，但是ArrayList可以存放任意数量的对象，长度不受限制，是怎么实现？
+                    // 答：通过数据扩容的方式去实现。
+                    // 比如：一个长度为10的数组，现在需要新增一个元素，发现满了，ArrayList会重新定义一个长度10+10/2的数组，然后把原数组的数据
+                    // 原封不动的复制到新数组中，再指向新数组
+                // 3. 1.7之前初始化的容量为10，1.7即本身以后都是默认走空数组，只有第一次add时容量才是10
+                // 4.为什么ArrayList增慢？
+                    // 答：有index新增也有直接新增，在新增之前会有一个长度的判断，如果长度不够需要扩容。
+                    // 比如长度为10的数组，在index(5)的位置新增一个元素，首先复制一个数组，将index(5)之后的元素放于新数组index(5+1)的位置，
+                    // 给需要新增的元素腾出位置，然后在index(5)的位置插入元素。慢的原因在于index(5)之后元素都需要复制，并且扩容。
+                // 5.ArrayList(int initialCapacity)会不会初始化大小？
+                    // 答：会初始化数组的大小，List的大小没有变，通过size获取。
+            ArrayList<Integer> list = new ArrayList<>(10);
+            System.out.println("初始化数组的大小为10，list的大小等于：" + list.size());
+            try {
+                list.set(5,1);
+                System.out.println("list set success");
+            }catch (Exception e){
+                System.out.println("list set exception");
+            }
+                // 6.ArrayList变为线程安全，Collections.synchronizedList
+            Collections.synchronizedList(list);
+                // 7.ArrayList适合做队列吗？
+                    // 答：不适合，队列是先进先出，如果使用ArrayList做队列，则需要在数组尾部追加数据，数组头部删除数据，反过来也可以，
+                    // 涉及到数组数据搬迁，这样太消耗性能。
+                // 8.数组适合做队列吗？
+                    // 答：适合。比如：ArrayBlockingQueue内部实现就是一个环形队列，是一个定长队列，内部是用一个定长数组来实现的，先进先出，
+                    // 有界队列（即初始化时指定的容量，就是队列最大的容量，不会出现扩容，容量满，则阻塞进队操作；容量空，则阻塞出队操作）。
+            ArrayBlockingQueue arrayBlockingQueue = new ArrayBlockingQueue<>(2);
+            arrayBlockingQueue.add(1);
+            System.out.println(arrayBlockingQueue);
+                // 9.ArrayList
+
+            // 2）LinkedList底层结构是链表型的，增删快，查询慢，不安全。
+            // 3）vector底层机构是数组，线程安全（所有方法加上synchronized），增删慢，查询慢。
+            // 存储单列数据的集合，存储顺序有序，且可以重复。
 
             //Set的两个实现类：
             // 1）HashSet底层结构是HashMap，不允许集合有重复值，需要重写equals()与hashCode()方法；
@@ -574,7 +610,7 @@ public class JavaTest {
             findArrayRepeatCountMethod();
 
             //使用两个队列模拟堆栈结构
-            //队列是先进先出，堆栈是先进后出。
+            //队列是先进先出（FIFO），堆栈是先进后出。
             simulationStackStructureMethod();
 
 

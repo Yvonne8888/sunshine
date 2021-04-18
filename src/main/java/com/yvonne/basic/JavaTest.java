@@ -585,7 +585,9 @@ public class JavaTest {
             ArrayBlockingQueue arrayBlockingQueue = new ArrayBlockingQueue<>(2);
             arrayBlockingQueue.add(1);
             System.out.println(arrayBlockingQueue);
-                // 9.ArrayList
+                // 9.ArrayList的遍历和LinkedList的遍历性能
+                    // 答：ArrayList快，优势在于内存的连续性
+                    // CPU的内存缓存结构会缓存连续的内存片段，可以大幅降低读取内存的性能开销。
 
             // 2）LinkedList底层结构是链表型的，增删快，查询慢，不安全。
             // 3）vector底层机构是数组，线程安全（所有方法加上synchronized），增删慢，查询慢。

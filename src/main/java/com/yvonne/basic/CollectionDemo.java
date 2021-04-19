@@ -2,6 +2,7 @@ package com.yvonne.basic;
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author ceshi
@@ -66,7 +67,7 @@ public class CollectionDemo {
         //Map的三个实现类一个接口：
         // 1）HashMap基于Hash表的Map接口实现，非线程安全，高效，支持null值与null键，数据结构：数组和链表组合
         // 2）LinkedHashMap是HashMap的一个子类，按照插入顺序
-        // 3）HashTable线程安全，低效，不支持null值与null键
+        // 3）HashTable线程安全，适合多线程情况但低效，不支持null值与null键，
         // 4）SortMap接口，TreeMap实现类，能够按照键排序，默认是键值的升序排序
         // 存储键值双列数据的集合，存储顺序无序，且键不可以重复，值可以重复
 
@@ -103,6 +104,53 @@ public class CollectionDemo {
             // 答：16.在JDK1.8的236行有1<<4就是16。
             // 为什么不直接赋值16，而是采用位运算计算？在创建HashMao时。阿里巴巴规范插件会提醒我们赋初值，而且最好是2的幂，
             // 位与运算比算数计算的效率高，之所以选择16，是为了服务将Key映射到index的算法
+        // 6.重写equals方法的时候需要重写hashCode方法，使用HashMap举例。
+            // 答：在JAVA中，所有的对象都继承于Object类，Object类中有两个方法equals和hashCode，都是用来比较两个对象是否相等。
+            // 在未重写equals方法我们是继承了Object的equals方法，是比较的两个对象的内存地址，显然new的2个对象内存地址不一样。
+            // HashMap是通过key的hashCode找到对应的index，那index形成了链表，就是说可能两个元素可能都在index=2的位置上，
+            // 当我们get元素时，怎么会知道找到的哪个元素，则采用equals来进行比较，如果重写了equals，建议一定重写hashCode，
+            // 以保证相同的对象返回相同的hash值，不同的对象返回不同的hash值。
+        // 7.HashMap中的链表大小超过8会自动转为红黑树，当删除小于6重新变为链表，为什么？
+            // 答：根据泊松分布，在负载因子默认为0.75的时候，单个hash槽内元素个数为8的概率小于百万分之一，所以将7作为一个分水岭，
+            // 等于7的时候转换，小于等于6时转换为链表。
+        // 8.HashMap线程安全问题
+            // 答：使用Collections.synchronizedMap(Map)创建线程安全，在synchronizedMap内部维护了一个普通对象Map，还有排斥锁mutex，
+            // 在调用这个方法时传入一个Map，可以看到有两个构造器，如果传入mutex参数，则将对象排斥锁赋值为传入的对象；如果没有传入mutex参数，
+            // 则将对象排斥锁赋值给this，即调用synchronizedMap的对象，创造出synchronizedMap之后，在操作map时，就会对方法上锁；
+            // 使用HashTable；
+            // 使用ConcurrentHashMap。出于线程并发度的原因，优先采用.
+        // 9.HashTable为什么效率低下？
+            // 答：对数据操作的时候都会上锁，所以效率比较低下。
+        Hashtable<Object, Object> hashtable = new Hashtable<>();
+        // 10.HashTable为什么不允许key和value为空，但是HashMap可以？
+        hashtable.put("111","222");
+        new HashMap().put("111","222");
+            // 答：因为HashTable在put值时会控制是否为null，如果是的话会直接抛出空指针异常，使用的是安全失败机制（fail-safe），
+            // 这种机制会使你此次读到的数据不一定是最新的，如果使用null值，就会使得无法判断对应的key是不存在还是为空，因为你无法调用一次
+            // contain(key)来对key是否存在进行判断
+            // 但是HashMap做了特殊处理，具体特殊处理不清楚
+        // 11.HashTable与HashMap的区别？
+            // 答：实现方式：HashTable继承了Dictionary类，Dictionary是JDK1.0时添加，很少有人用，而HashMap继承AbstractMap类。
+            // 初始化容器：HashTable的初始容器为11，HashMap的初始容器为16，两者的负载因子默认为0.75
+            // 扩容机制：当现有容量大于总容量*负载因子时，HashMap扩容规则为当前容量的2倍，HashTable扩容规则为当前容量的2倍+1
+            // 迭代器：HashMap中的Iterator迭代器时fail-fast，HashTable的Enumerator不是fail-fast。所以当其他线程改变了HashMap的结构，
+            // 如新增删除元素，将会抛出ConcurrentModificationException异常，而HashTable不会。
+        // 12.fail-fast
+            // 答：快速失败（fail-fast）是JAVA集合中的一种机制，在用迭代器遍历一个集合对象时，如果遍历过程中对集合对象的内容进行修改，
+            // 则会抛出ConcurrentModificationException异常，原理：迭代器在遍历时直接访问集合中的内容，并且在遍历过程中使用一个modCount变
+            // 量。集合在被遍历期间如果内容发生变化，就会改变modCount的值。每当迭代器使用hashNext()/next()遍历下一个元素之前，都会检测
+            // modCount变量是否为expectedModCount值，是的话就返回遍历，不是则抛出异常，终止遍历。
+            // 场景：java.util包下的集合类都是快速失败的，不能在多线程下发生并修改（迭代过程中被修改）是一种安全机制。
+        // 13.fail-safe
+            // 答：安全失败（file-safe），java.util.concurrent包下的容器都是安全失败的，可以在多线程下并发使用，并发修改
+        // 14.HashTable并发度不够，性能低，改如何处理？
+            // 答：使用ConcurrentHashMap，数据结构：Segment数组+HashEntry链表组成。HashEntry由volatile修饰数据value还有下一个节点next。
+        // volatile的特性
+            // 答：保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量的值，新值对其他线程来说是立即可见的（实现可见性）；
+            // 禁止进行指令重排序（实现有序性）；
+            // volatile只能保证对单次读/写的原子性。i++这种操作不能保证原子性。
+
+
 
 
         //使用HashMap排序。HashMap本身不可排序，可以使用LinkedHashMap，是有序链表结构。采用Collections集合工具类

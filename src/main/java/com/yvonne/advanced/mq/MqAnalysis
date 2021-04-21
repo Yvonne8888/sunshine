@@ -27,6 +27,24 @@ MQ消息队列
             个队列来解决一条消息被多个消费者消费问题，但是会有数据的冗余。
     }
 
+    消息队列的推拉模式 {
+        推：Producer将消息推送给Broker。
+        拉：Consumer从Broker中拉取消息。为什么不采用推模式？如果Broker发送消息速度大于消费者消费消息的速度，消费者可能会“爆仓”。
+            RocketMQ和Kafka采用“长轮询”来实现拉取。
+            RocketMQ：后台有个RebalanceService线程，这个线程会根据topic的队列数量和当前消费组的消费个数做负载均衡，
+                每个队列产生的pullRequest放入阻塞队列pullRequestQueue中，然后又有个pullMessageService线程不断的从
+                阻塞队列pullRequestQueue中获取pullReuqest，然后通过网络请求Broker，这样实现的准实时拉取消息。
+                然后Broker的pullMessageProcessor里面的processRequest方法是用来处理拉消息请求的，有消息就直接返回，
+                如果没有消息，pullRequestHoldService这个线程会每5秒从pullRequestTable取pullRequest请求，然后看看待拉取消息请求的
+                偏移量是否小于当前消费队列最大偏移量，如果条件成立则说明有新消息，则会调用notifyMessageArriving，最终调用
+                pullMessageProcessor的executeRequestWhenWakeup()方法重新尝试处理这个消息的请求。整个长轮询的时间默认30秒。
+                还有个 ReputMessageService 线程，这个线程用来不断地从 commitLog 中解析数据并分发请求，构建出 ConsumeQueue和IndexFile
+                两种类型的数据，并且也会有唤醒请求的操作，来弥补每 5s 一次这么慢的延迟。
+            Kafka：消费者去 Broker 拉消息，定义了一个超时时间，也就是说消费者去请求消息，如果有的话马上返回消息，如果没有的话消费者等着直到
+                超时，然后再次发起拉消息请求。
+                并且 Broker 也得配合，如果消费者请求过来，有消息肯定马上返回，没有消息那就建立一个延迟操作，等条件满足了再返回。
+    }
+
     缺点 {
         1）系统复杂性：
             需要维护中间件

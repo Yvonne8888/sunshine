@@ -74,6 +74,30 @@ Zookeeper注册中心
                 4.判断是否有超过一半的投票选举同一个节点，如果是选举结束根据投票结果设置自己的服务状态，选举结束，否则继续进入投票流程。
             }
         }
+        广播 {
+            整个写请求类似一个二阶段的提交。
+            当收到客户端的写请求的时候会经历以下几个步骤：
+                1.Leader收到客户端的写请求，生成一个事务（Proposal），其中包含了zxid；
+                2.Leader开始广播该事务，需要注意的是所有节点的通讯都是由一个FIFO的队列维护的；
+                3.Follower接受到事务之后，将事务写入本地磁盘，写入成功之后返回Leader一个ACK；
+                4.Leader收到过半的ACK之后，开始提交本事务，并广播事务提交信息
+                5.从节点开始提交本事务。
+            zab协议的有序性保证是通过几个方面来体现的，
+                第一，服务之前用TCP协议进行通讯，保证在网络传输中的有序性；
+                第二，节点之前都维护了一个FIFO的队列，保证全局有序性；
+                第三，通过全局递增的zxid保证因果有序性。
+        }
+    }
+
+    Zookeeper与ZAB之间的状态流转 {
+        1.服务在启动或者和leader失联之后服务状态转为LOOKING；
+        2.如果leader不存在选举leader，如果存在直接连接leader，此时zab协议状态为ELECTION；
+        3.如果有超过半数的投票选择同一台server，则leader选举结束，被选举为leader的server服务状态为LEADING，
+            其他server服务状态为FOLLOWING/OBSERVING；
+        4.所有server连接上leader，此时zab协议状态为DISCOVERY；
+        5.leader同步数据给learner，使各个从节点数据和leader保持一致，此时zab协议状态为SYNCHRONIZATION；
+        6.同步超过一半的server之后，集群对外提供服务，此时zab状态为BROADCAST。
+
     }
 
 

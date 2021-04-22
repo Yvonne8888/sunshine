@@ -22,4 +22,58 @@ Zookeeper注册中心
     集群管理 {
         Zookeeper会每次选举最小编号的作为Master，如果Master挂了，自然对应的Znode节点就会删除。然后让新的最小编号作为Master，
             这样就可以实现动态选举的功能了。
+
+        集群角色 {
+            Leader：同一时间集群总只允许有一个Leader，提供对客户端的读写功能，负责将数据同步至各个节点；
+            Follower：提供对客户端读功能，写请求则转发给Leader处理，当Leader崩溃失联之后参与Leader选举；
+            Observer：与Follower不同的是但不参与Leader选举。
+        }
+        服务状态 {
+            LOOKING：当节点认为群集中没有Leader，服务器会进入LOOKING状态，目的是为了查找或者选举Leader；
+            FOLLOWING：follower角色；
+            LEADING：leader角色；
+            OBSERVING：observer角色；
+            可以知道Zookeeper是通过自身的状态来区分自己所属的角色，来执行自己应该的任务
+        }
     }
+
+    Zookeeper的ZAB(Zookeeper Atomic broadcast) {
+        ZAB是为ZooKeeper设计的崩溃恢复原子广播协议，它保证zookeeper集群数据的一致性和命令的全局有序性。
+        ZAB状态用枚举定义
+         public enum ZabState {
+            ELECTION,集群进入选举状态，此过程会选出一个节点作为leader角色；
+            DISCOVERY,连接上leader，响应leader心跳，并且检测leader的角色是否更改，通过此步骤之后选举出的leader才能执行真正职务；
+            SYNCHRONIZATION,整个集群都确认leader之后，将会把leader的数据同步到各个节点，保证整个集群的数据一致性；
+            BROADCAST,过渡到广播状态，集群开始对外提供服务。
+        }
+        ZXID {
+            是一个long型（64位）整数，分为两部分：纪元（epoch）部分和计数器（counter）部分，是一个全局有序的数字。
+            epoch代表当前集群所属的哪个leader，leader的选举就类似一个朝代的更替，你前朝的剑不能斩本朝的官，
+                用epoch代表当前命令的有效性，counter是一个递增的数字。
+        }
+        leader选举 {
+            选举时机 {
+                1.服务启动时，整个集群都没有leader则会进入选举状态
+                2.服务运行时，因为宕机、断电、网络延迟很高等问题，leader不能对外提供服务，检测不到心跳，集群会进入选举状态
+            }
+            选举规则 {
+                return ((newEpoch > curEpoch)
+                                || ((newEpoch == curEpoch)
+                                    && ((newZxid > curZxid)
+                                        || ((newZxid == curZxid)
+                                            && (newId > curId)))));
+                纪元高优先；
+                纪元相同则比较zxid的大小，zxid大的节点优先（这里zxid代表节点所提交事务最大的id，zxid越大，表示该节点的数据越完整）；
+                zxid相同则比较服务的serverId，这个Id是配置zookeeper集群所配置的，所以我们配置zookeeper集群的时候可以把服务性能更高
+                    的集群的serverId配置大些，让性能好的机器担任leader角色
+            }
+            选举流程 {
+                1.所有节点第一票先选举自己当leader，将投票信息广播出去；
+                2.从队列中接受投票信息；
+                3.按照规则判断是否需要更改投票信息，将更改后的投票信息再次广播出去；
+                4.判断是否有超过一半的投票选举同一个节点，如果是选举结束根据投票结果设置自己的服务状态，选举结束，否则继续进入投票流程。
+            }
+        }
+    }
+
+
